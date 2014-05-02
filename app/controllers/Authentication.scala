@@ -57,13 +57,25 @@ object Authentication extends Controller {
   def prepareSignup = Action { implicit request =>
     Ok(views.html.signup(prepareForm))
   }
+  
+  import play.api.Play.current
+  import com.typesafe.plugin._
 
-  //FIXME not to send to registered email
+  private def sendEmail(toAddress: String, subject: String, body: String) {
+    val mail =  use[MailerPlugin].email
+    mail.addFrom(Play.current.configuration.getString("smtp.user").getOrElse(""))
+    mail.addRecipient(toAddress)
+    mail.setSubject(subject)
+    mail.send(body)
+  }
+
   def sendSignupEmail = Action { implicit request =>
     prepareForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.signup(formWithErrors)),
       email => {
-        Token.create(email)
+        val token = Token.create(email)
+	val host = Play.current.configuration.getString("host").getOrElse("http://localhost:9000")
+	sendEmail(email, "Welcome to Garoku", host + routes.Authentication.prepareSignup + "/" + token.token)
         Ok(views.html.send(Token.all()))
       }
     )
