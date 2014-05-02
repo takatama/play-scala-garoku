@@ -6,7 +6,6 @@ import play.api.test._
 import play.api.test.Helpers._
 
 import models.User
-import anorm.NotAssigned
 
 @RunWith(classOf[JUnitRunner])
 class UserSpec extends Specification {
@@ -16,14 +15,10 @@ class UserSpec extends Specification {
       val name = "first family"
       val password = "password"
 
-      val user1 = User.create(
-        User(NotAssigned, email, name, password)
-      )
+      val user1 = User.create(email, name, password)
       user1 must beRight
 
-      val user2 = User.create(
-        User(NotAssigned, email, name, password)
-      )
+      val user2 = User.create(email, name, password)
       user2 must beLeft
     }
   }
@@ -34,9 +29,7 @@ class UserSpec extends Specification {
       val name = "first family"
       val password = "password"
 
-      User.create(
-        User(NotAssigned, email, name, password)
-      )
+      User.create(email, name, password)
 
       val user = User.authenticate(email, password)
       user must beSome

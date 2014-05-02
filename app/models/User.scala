@@ -7,7 +7,6 @@ import anorm._
 import anorm.SqlParser._
 
 import com.github.t3hnar.bcrypt._
-import play.api.Logger
 
 case class User(id: Pk[Long], email: String, name: String, password: String)
 
@@ -29,16 +28,13 @@ object User {
     }
   }
 
-  def create(user: User): Either[String, User] = {
-    findByEmail(user.email) match {
+  def create(email: String, name: String, password: String): Either[String, User] = {
+    findByEmail(email) match {
       case Some(_) => Left("The email has been used.")
       case None => {
         DB.withConnection { implicit connection =>
-          val id: Long = user.id.getOrElse {
-            SQL("select next value for user_seq").as(scalar[Long].single)
-          }
-
-          val hashed = user.password.bcrypt(generateSalt)
+          val id: Long = SQL("select next value for user_seq").as(scalar[Long].single)
+          val hashed = password.bcrypt(generateSalt)
 
           SQL(
             """
@@ -48,12 +44,12 @@ object User {
 	    """
           ).on(
             "id" -> id,
-            "email" -> user.email,
-	    "name" -> user.name,
+            "email" -> email,
+	    "name" -> name,
 	    "password" -> hashed
           ).executeUpdate()
 
-          Right(user.copy(id = Id(id)))
+          Right(User(Id(id), email, name, hashed))
         }
       }
     }

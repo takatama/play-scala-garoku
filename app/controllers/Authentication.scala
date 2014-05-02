@@ -9,6 +9,7 @@ import models.{User, Token}
 import views._
 
 trait Secured {
+  //FIXME do not save email to cookie
   private def username(request: RequestHeader) = request.session.get("email")
   private def onUnauthorized(request: RequestHeader) = Results.Redirect(routes.Authentication.login).withSession("uri" -> request.uri)
   def SecureAction(f: => String => Request[AnyContent] => Result) = Security.Authenticated(username, onUnauthorized) { user =>
@@ -34,6 +35,7 @@ object Authentication extends Controller {
     val uri = session.get("uri").getOrElse("/")
     loginForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.login(formWithErrors)),
+      //FIXME do not save email to cookie
       user => Redirect(uri).withSession("email" -> user._1)
     )
   }
@@ -95,8 +97,9 @@ object Authentication extends Controller {
         registerForm.bindFromRequest.fold(
 	  errors => redirectToSignup,
 	  form => {
-            User.create(User(anorm.NotAssigned, token.email, form._1, form._2))
+            User.create(token.email, form._1, form._2)
 	    //FIXME customize top page
+	    //FIXME do not save email to cookie
             Redirect(routes.Application.index).withSession("email" -> token.email)
 	  }
 	)
