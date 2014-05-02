@@ -1,0 +1,29 @@
+@(form: Form[(String, String)], token: Token)(implicit flash: Flash)
+<html>
+  <head>
+    <title>Register</title>
+  </head>
+  <body>
+    @helper.form(routes.Authentication.register(token.token)) {
+      <h1>Register</h1>
+      @form.globalError.map { error =>
+        <p class="error">@error.message</p>
+      }
+      @flash.get("success").map { message =>
+        <p class="success">@message</p>
+      }
+      <p>
+	@token.email
+      </p>
+      <p>
+        <input type="text" name="name" placeholder="Name" id="name" />
+      </p>
+      <p>
+        <input type="password" name="password" placeholder="Password" id="password" />
+      </p>
+      <p>
+        <button type="submit" id="register-button">Submit</button>
+      </p>
+    }
+  </body>
+</html>

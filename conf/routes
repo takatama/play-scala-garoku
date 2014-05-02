@@ -8,8 +8,8 @@ GET     /                           controllers.Application.index
 # Sign up
 GET     /signup                     controllers.Authentication.prepareSignup
 POST    /signup                     controllers.Authentication.sendSignupEmail
-#GET     /signup/:token              controllers.Authentication.prepareRegister(token: String)
-#POST    /signup/:token              controllers.Authentication.register(token: String)
+GET     /signup/:token              controllers.Authentication.prepareRegister(token: String)
+POST    /signup/:token              controllers.Authentication.register(token: String)
 
 # Reset password
 #GET     /reset                      controllers.Authentication.prepareReset

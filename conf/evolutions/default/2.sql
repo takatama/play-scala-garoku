@@ -1,7 +1,11 @@
 # --- !Ups
 
-insert into user (id, email, name, password) values (user_seq.nextval, 'a@a', 'a', 'a');
+create table token (
+  token varchar(255) not null primary key,
+  email varchar(255) not null,
+  created timestamp not null default current_timestamp
+);
 
 # --- !Downs
 
-delete from user where id = 1
+drop table if exists signup;

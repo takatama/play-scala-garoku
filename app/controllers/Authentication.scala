@@ -44,21 +44,64 @@ object Authentication extends Controller {
     )
   }
 
-  val emailForm = Form(
-    "email" -> nonEmptyText
+  val prepareForm = Form(
+    single(
+      "email" -> nonEmptyText
+    ) verifying ("The email has been registered", result => result match {
+      case(email) => User.findByEmail(email).isEmpty
+    })
   )
 
   def prepareSignup = Action { implicit request =>
-    Ok(views.html.signup(emailForm))
+    Ok(views.html.signup(prepareForm))
   }
 
+  //FIXME not to send to registered email
   def sendSignupEmail = Action { implicit request =>
-    emailForm.bindFromRequest.fold(
+    prepareForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.signup(formWithErrors)),
       email => {
         Token.create(email)
         Ok(views.html.send(Token.all()))
       }
     )
+  }
+
+  val registerForm = Form(
+    tuple(
+      "name" -> nonEmptyText,
+      "password" -> nonEmptyText
+    )
+  )
+
+  private def redirectToSignup = {
+    Redirect(routes.Authentication.prepareSignup).withNewSession.flashing(
+      "error" -> "Signup url is invalid. Please retry to send email"
+    )
+  }
+
+  def prepareRegister(token: String) = Action { implicit request =>
+    Token.findByToken(token) match {
+      case Some(token) => {
+        Ok(views.html.register(registerForm, token))
+      }
+      case None => redirectToSignup
+    }
+  }
+
+  def register(token: String) = Action { implicit request =>
+    Token.findByToken(token) match {
+      case Some(token) => {
+        registerForm.bindFromRequest.fold(
+	  errors => redirectToSignup,
+	  form => {
+            User.create(User(anorm.NotAssigned, token.email, form._1, form._2))
+	    //FIXME customize top page
+            Redirect(routes.Application.index).withSession("email" -> token.email)
+	  }
+	)
+      }
+      case None => redirectToSignup
+    }
   }
 }
