@@ -5,7 +5,8 @@ version := "1.0-SNAPSHOT"
 libraryDependencies ++= Seq(
   jdbc,
   anorm,
-  cache
+  cache,
+  "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.2"
 )     
 
 play.Project.playScalaSettings
