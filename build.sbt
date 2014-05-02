@@ -6,7 +6,7 @@ libraryDependencies ++= Seq(
   jdbc,
   anorm,
   cache,
-  "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.2"
+  "com.github.t3hnar" % "scala-bcrypt_2.10" % "2.3"
 )     
 
 play.Project.playScalaSettings
