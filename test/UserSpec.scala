@@ -10,6 +10,24 @@ import anorm.NotAssigned
 
 @RunWith(classOf[JUnitRunner])
 class UserSpec extends Specification {
+  "User#create" should {
+    "not create another user with the same email" in new WithApplication {
+      val email = "username@example.com"
+      val name = "first family"
+      val password = "password"
+
+      val user1 = User.create(
+        User(NotAssigned, email, name, password)
+      )
+      user1 must beRight
+
+      val user2 = User.create(
+        User(NotAssigned, email, name, password)
+      )
+      user2 must beLeft
+    }
+  }
+
   "User#authenticate" should {
     "allow to access valid user" in new WithApplication {
       val email = "username@example.com"
