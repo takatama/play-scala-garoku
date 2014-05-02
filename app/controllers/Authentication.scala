@@ -5,7 +5,7 @@ import play.api.mvc._
 import play.api.data._
 import play.api.data.Forms._
 
-import models.User
+import models.{User, Token}
 import views._
 
 trait Secured {
@@ -41,6 +41,24 @@ object Authentication extends Controller {
   def logout = Action {
     Redirect(routes.Authentication.login).withNewSession.flashing(
       "success" -> "You've been logged out"
+    )
+  }
+
+  val emailForm = Form(
+    "email" -> nonEmptyText
+  )
+
+  def prepareSignup = Action { implicit request =>
+    Ok(views.html.signup(emailForm))
+  }
+
+  def sendSignupEmail = Action { implicit request =>
+    emailForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(views.html.signup(formWithErrors)),
+      email => {
+        Token.create(email)
+        Ok(views.html.send(Token.all()))
+      }
     )
   }
 }

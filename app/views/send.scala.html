@@ -1,0 +1,14 @@
+@(tokens: List[Token])
+<html>
+  <head>
+    <title>Send</title>
+  </head>
+  <body>
+    <h1>Email has been send</h1>
+    <ul>
+    @tokens.map { token =>
+      <li><a href="/signup/@token.token">@token.token</a></li>
+    }
+    </ul>
+  </body>
+</html>
