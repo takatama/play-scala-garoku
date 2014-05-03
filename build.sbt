@@ -1,4 +1,4 @@
-name := "play-scala-email-auth"
+name := "garoku"
 
 version := "1.0-SNAPSHOT"
 

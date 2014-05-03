@@ -1,26 +1,26 @@
 @(form: Form[(String)])(implicit flash: Flash)
-<html>
-  <head>
-    <title>Signup</title>
-  </head>
-  <body>
-    @flash.get("error").map { message =>
-      <p class="error">@message</p>
-    }
-    @helper.form(routes.Authentication.sendSignupEmail) {
-      <h1>Signup</h1>
-      @form.globalError.map { error =>
-        <p class="error">@error.message</p>
-      }
-      @flash.get("success").map { message =>
-	<p class="success">@message</p>
-      }
-      <p>
-        <input type="email" name="email" placeholder="Email" id="email" value="@form("email").value" />
-      </p>
-      <p>
-        <button type="submit" id="send-email-button">Send email</button>
-      </p>
-    }
-  </body>
-</html>
+@main("Signup") {
+  <a href="/login" class="btn btn-link btn-nav pull-left" data-transition="slide-out">
+    Login
+  </a>
+  <h1 class="title">Signup</h1>
+} {
+  @form.globalError.map { error =>
+    <h3 class="error">@error.message</h3>
+  }
+  @flash.get("error").map { message =>
+    <h3 class="success">@message</h3>
+  }
+  @flash.get("success").map { message =>
+    <h3 class="success">@message</h3>
+  }
+  @helper.form(routes.Authentication.sendSignupEmail) {
+    <div class="input-group">
+      <div class="input-row">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="user@@example.com" id="email" value="@form("email").value" />
+      </div>
+    </div>
+    <button class="btn btn-block" type="submit" id="send-email-button">Send email</button>
+  }
+}
