@@ -46,7 +46,7 @@ object Authentication extends Controller {
     )
   }
 
-  val prepareForm = Form(
+  val signupForm = Form(
     single(
       "email" -> nonEmptyText
     ) verifying ("The email has been registered", result => result match {
@@ -55,7 +55,7 @@ object Authentication extends Controller {
   )
 
   def prepareSignup = Action { implicit request =>
-    Ok(views.html.signup(prepareForm))
+    Ok(views.html.signup(signupForm))
   }
   
   import play.api.Play.current
@@ -69,15 +69,17 @@ object Authentication extends Controller {
     mail.send(body)
   }
 
+  private def sendEmailWithToken(toAddress: String, action: String, subject: String) = {
+    val token = Token.create(toAddress, action)
+    val host = Play.configuration.getString("host").getOrElse("http://localhost:9000")
+    //sendEmail(toAddress, subject, host + "/register/" + token.token)
+    Ok(views.html.send(Token.all()))
+  }
+
   def sendSignupEmail = Action { implicit request =>
-    prepareForm.bindFromRequest.fold(
+    signupForm.bindFromRequest.fold(
       formWithErrors => BadRequest(views.html.signup(formWithErrors)),
-      email => {
-        val token = Token.create(email)
-	val host = Play.current.configuration.getString("host").getOrElse("http://localhost:9000")
-	sendEmail(email, "Welcome to Garoku", host + routes.Authentication.prepareSignup + "/" + token.token)
-        Ok(views.html.send(Token.all()))
-      }
+      email => sendEmailWithToken(email, "signup", "Welcome to Garoku")
     )
   }
 
@@ -109,7 +111,10 @@ object Authentication extends Controller {
         registerForm.bindFromRequest.fold(
 	  errors => redirectToSignup,
 	  form => {
-            User.create(token.email, form._1, form._2)
+	    token.action match {
+	      case "signup" => User.create(token.email, form._1, form._2)
+	      case "reset" => User.update(token.email, form._1, form._2)
+	    }
 	    //FIXME customize top page
 	    //FIXME do not save email to cookie
             Redirect(routes.Application.index).withSession("email" -> token.email)
@@ -118,5 +123,24 @@ object Authentication extends Controller {
       }
       case None => redirectToSignup
     }
+  }
+
+  val resetForm = Form(
+    single(
+      "email" -> nonEmptyText
+    ) verifying ("The email has not been registered", result => result match {
+      case(email) => User.findByEmail(email).isDefined
+    })
+  )
+
+  def prepareReset = Action { implicit request =>
+    Ok(views.html.reset(resetForm))
+  }
+
+  def sendResetEmail = Action { implicit request =>
+    resetForm.bindFromRequest.fold(
+      formWithErrors => BadRequest(views.html.reset(formWithErrors)),
+      email => sendEmailWithToken(email, "reset", "Password reset")
+    )
   }
 }

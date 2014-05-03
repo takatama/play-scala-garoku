@@ -8,14 +8,12 @@ GET     /                           controllers.Application.index
 # Sign up
 GET     /signup                     controllers.Authentication.prepareSignup
 POST    /signup                     controllers.Authentication.sendSignupEmail
-GET     /signup/:token              controllers.Authentication.prepareRegister(token: String)
-POST    /signup/:token              controllers.Authentication.register(token: String)
+GET     /register/:token            controllers.Authentication.prepareRegister(token: String)
+POST    /register/:token            controllers.Authentication.register(token: String)
 
 # Reset password
-#GET     /reset                      controllers.Authentication.prepareReset
-#POST    /reset                      controllers.Authentication.sendEmail
-#GET     /reset/:token               controllers.Authentication.prepareReset(token: String)
-#POST    /reset/:token               controllers.Authentication.reset(token: String)
+GET     /reset                      controllers.Authentication.prepareReset
+POST    /reset                      controllers.Authentication.sendResetEmail
 
 # Authentication
 GET     /login                      controllers.Authentication.login

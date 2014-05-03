@@ -76,5 +76,30 @@ object User {
       }
     }
   }
+
+  def update(email: String, name: String, password: String): Either[String, User] = {
+    findByEmail(email) match {
+      case None => Left("The email has been used.")
+      case Some(user) => {
+        DB.withConnection { implicit connection =>
+          val hashed = password.bcrypt(generateSalt)
+
+          SQL(
+            """
+	      update user set name = {name}, password = {password}
+	      where id = {id} and email = {email}
+	    """
+          ).on(
+            "id" -> user.id,
+            "email" -> email,
+	    "name" -> name,
+	    "password" -> hashed
+          ).executeUpdate()
+
+          Right(User(user.id, email, name, hashed))
+        }
+      }
+    }
+  }
 }
 
