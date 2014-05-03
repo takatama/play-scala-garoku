@@ -2,4 +2,4 @@ A boilerplate of email authentication for Play Framework 2.2.x + Scala
 
 NOTICE:
 This software uses following libraries. Please check their copyright and licence.
-- scala-bcrypt (Apacke 2 licence) https://github.com/t3hnar/scala-bcrypt/blob/master/LICENSE
+- scala-bcrypt (Apache 2 licence) https://github.com/t3hnar/scala-bcrypt/blob/master/LICENSE
