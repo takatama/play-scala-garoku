@@ -30,4 +30,17 @@ class ImageSpec extends Specification {
       image.created must not beNull
     }
   }
+
+  "Image#find" should {
+    "find an image by id" in new WithApplication {
+      val contentType = "image/png"
+      val path = "image.png"
+      val recordId = Record.create("memo").id
+      val id = Image.create(contentType, path, recordId).id.get
+      Image.find(id) match {
+        case Some(image) => image.id.get must beEqualTo(id)
+	case None => failure("must find an image by id")
+      }
+    }
+  }
 }

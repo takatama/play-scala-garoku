@@ -10,8 +10,9 @@ object Records extends Controller with Secured {
     Ok(views.html.index("Your new application is ready."))
   }
 
-  def list = TODO
   def prepareUpload = TODO
   def upload = TODO
+
+  def list = TODO
   def show(id: Long) = TODO
 }

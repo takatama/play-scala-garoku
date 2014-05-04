@@ -46,5 +46,11 @@ object Image {
   def all(): List[Image] = DB.withConnection { implicit connection =>
     SQL("select * from image").as(simple *)
   }
+
+  def find(id: Long): Option[Image] = DB.withConnection { implicit connection =>
+    SQL("select * from image where id = {id}").on(
+      "id" -> id
+    ).as(Image.simple.singleOpt)
+  }
 }
 
