@@ -14,9 +14,7 @@ create table image (
   id integer not null primary key,
   content_type varchar(255) not null,
   path varchar(255) not null,
-  record_id integer not null,
   created timestamp not null default current_timestamp,
-  foreign key(record_id) references record(id) on delete cascade
 );
 
 # --- !Downs
