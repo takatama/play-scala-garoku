@@ -41,4 +41,9 @@ object Images extends Controller with Secured {
       case Some(image) => Ok.sendFile(content = new java.io.File(image.path), inline = true).withHeaders(CONTENT_TYPE -> image.contentType)
     }
   }
+
+  def list = SecureAction { user => implicit request =>
+    val images = Image.all
+    Ok(views.html.list(images))
+  }
 }

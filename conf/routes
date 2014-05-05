@@ -7,6 +7,7 @@ GET     /                           controllers.Application.index
 GET     /upload                     controllers.Images.prepareUpload
 POST    /upload                     controllers.Images.upload
 GET     /images/:id                 controllers.Images.show(id: Long)
+GET     /images                     controllers.Images.list
 #GET     /records                    controllers.Records.list
 #GET     /records/:id                controllers.Records.show(id: Long)
 

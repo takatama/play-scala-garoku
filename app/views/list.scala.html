@@ -1,0 +1,21 @@
+@(images: List[Image])(implicit flash: Flash)
+@main("Images") {
+  <h1 class="title">Images</h1>
+} {
+  @flash.get("error").map { message =>
+    <h3 class="error">@message</h3>
+  }
+  @flash.get("success").map { message =>
+    <h3 class="success">@message</h3>
+  }
+  <ul class="table-view">
+  @images.map { image =>
+      <li class="table-view-cell media">
+        <img width="128 height="128" class="media-object pull-left" src="/images/@image.id">
+        <div class="media-body">
+          <p>@image.created</p>
+        </div>
+      </li>
+  }
+  </ul>
+}
