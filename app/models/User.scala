@@ -12,17 +12,17 @@ case class User(id: Pk[Long], email: String, name: String, password: String)
 
 object User {
   val simple = {
-    get[Pk[Long]]("user.id") ~
-    get[String]("user.email") ~
-    get[String]("user.name") ~
-    get[String]("user.password") map {
+    get[Pk[Long]]("users.id") ~
+    get[String]("users.email") ~
+    get[String]("users.name") ~
+    get[String]("users.password") map {
       case id~email~name~password => User(id, email, name, password)
     }
   }
 
   def findByEmail(email: String): Option[User] = {
     DB.withConnection { implicit connection =>
-      SQL("select * from user where email = {email}").on(
+      SQL("select * from users where email = {email}").on(
         "email" -> email
       ).as(User.simple.singleOpt)
     }
@@ -38,7 +38,7 @@ object User {
 
           SQL(
             """
-	      insert into user values (
+	      insert into users values (
 	        {id}, {email}, {name}, {password}
 	      )
 	    """
@@ -59,7 +59,7 @@ object User {
     DB.withConnection { implicit connection =>
       SQL(
         """
-	  select * from user where
+	  select * from users where
 	  email = {email}
 	"""
       ).on(
@@ -86,7 +86,7 @@ object User {
 
           SQL(
             """
-	      update user set name = {name}, password = {password}
+	      update users set name = {name}, password = {password}
 	      where id = {id} and email = {email}
 	    """
           ).on(
