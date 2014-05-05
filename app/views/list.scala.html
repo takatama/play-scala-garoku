@@ -14,6 +14,7 @@
         <img width="128 height="128" class="media-object pull-left" src="/images/@image.id">
         <div class="media-body">
           <p>@image.created</p>
+	  <p>@image.logs.groupBy(_.user).keys.size users were accessed</p>
         </div>
       </li>
   }

@@ -38,12 +38,15 @@ object Images extends Controller with Secured {
   def show(id: Long) = SecureAction { user => _ =>
     Image.find(id) match {
       case None => BadRequest("No such image.")
-      case Some(image) => Ok.sendFile(content = new java.io.File(image.path), inline = true).withHeaders(CONTENT_TYPE -> image.contentType)
+      case Some(image) => {
+        Image.addLog(image, user)
+        Ok.sendFile(content = new java.io.File(image.path), inline = true).withHeaders(CONTENT_TYPE -> image.contentType)
+      }
     }
   }
 
   def list = SecureAction { user => implicit request =>
-    val images = Image.all
+    val images = Image.findByUser(user)
     Ok(views.html.list(images))
   }
 }

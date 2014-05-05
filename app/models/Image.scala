@@ -21,7 +21,11 @@ object Log {
   }
 }
 
-case class Image(id: Pk[Long], contentType: String, path: String, created: Date, user: String)
+case class Image(id: Pk[Long], contentType: String, path: String, created: Date, user: String) {
+  def logs: List[Log] = {
+    Image.logs(this)
+  }
+}
 
 object Image {
   val simple = {
