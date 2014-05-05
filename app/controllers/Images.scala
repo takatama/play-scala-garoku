@@ -13,7 +13,7 @@ object Images extends Controller with Secured {
     Ok(views.html.upload())
   }
 
-  def upload = Action(parse.multipartFormData) { request => 
+  def upload = SecureAction(parse.multipartFormData) { user => implicit request => 
       request.body.file("image").map { image =>
         import java.io.File
         val contentType = image.contentType
@@ -24,7 +24,7 @@ object Images extends Controller with Secured {
 	  case Some(c) => {
 	    val path = "/tmp/image/" + image.filename
             image.ref.moveTo(new File(path), true)
-	    Image.create(c, path)
+	    Image.create(c, path, user)
             Ok("File uploaded")
 	  }
 	}

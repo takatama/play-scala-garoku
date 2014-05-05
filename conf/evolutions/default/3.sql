@@ -15,6 +15,7 @@ create table image (
   content_type varchar(255) not null,
   path varchar(255) not null,
   created timestamp not null default current_timestamp,
+  user varchar(255) not null
 );
 
 # --- !Downs
