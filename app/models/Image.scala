@@ -8,6 +8,19 @@ import anorm.SqlParser._
 
 import java.util.Date
 
+case class Log(id: Pk[Long], imageId: Pk[Long], user: String, created: Date)
+
+object Log {
+  val simple = {
+    get[Pk[Long]]("log.id") ~
+    get[Pk[Long]]("log.image_id") ~
+    get[String]("log.user") ~
+    get[Date]("log.created") map {
+      case id~imageId~user~created => Log(id, imageId, user, created)
+    }
+  }
+}
+
 case class Image(id: Pk[Long], contentType: String, path: String, created: Date, user: String)
 
 object Image {
@@ -57,6 +70,29 @@ object Image {
     SQL("select * from image where user = {user}").on(
       "user" -> user
     ).as(simple *)
+  }
+
+  def addLog(image: Image, user: String): Option[Log] = DB.withConnection { implicit connection =>
+    if (image.user == user) {
+      None
+    } else {
+      val id: Long = SQL("select next value for log_seq").as(scalar[Long].single)
+      val created = new Date
+      val log = Log(Id(id), image.id, user, created)
+      SQL("insert into log values({id}, {imageId}, {user}, {created})").on(
+        "id" -> log.id,
+        "imageId" -> log.imageId,
+        "user" -> log.user,
+        "created" -> log.created
+      ).executeUpdate()
+      Some(log)
+    }
+  }
+
+  def logs(image: Image): List[Log] = DB.withConnection { implicit connection =>
+    SQL("select * from log where image_id = {imageId}").on(
+      "imageId" -> image.id
+    ).as(Log.simple *)
   }
 }
 

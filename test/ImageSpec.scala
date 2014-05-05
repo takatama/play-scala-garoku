@@ -57,4 +57,46 @@ class ImageSpec extends Specification {
       images.head.user must beEqualTo(user1) 
     }
   }
+
+  "Image#addLog" should {
+    "create a new log" in new WithApplication {
+      val contentType = "image/png"
+      val path = "image.png"
+      val user1 = "user1@example.com"
+      val image = Image.create(contentType, path, user1)
+      val user2 = "user2@example.com"
+      Image.addLog(image, user2) match {
+        case Some(log) => log.user must beEqualTo(user2)
+	case None => failure
+      }
+    }
+  }
+
+  "Image#addLog" should {
+    "not create a new log of image owner" in new WithApplication {
+      val contentType = "image/png"
+      val path = "image.png"
+      val user = "user@example.com"
+      val image = Image.create(contentType, path, user)
+      Image.addLog(image, user) match {
+	case Some(_) => failure
+        case None => success
+      }
+    }
+  }
+
+  "Image#logs" should {
+    "return logs after Image#addLog" in new WithApplication {
+      val contentType = "image/png"
+      val path = "image.png"
+      val user1 = "user1@example.com"
+      val image = Image.create(contentType, path, user1)
+      Image.logs(image).length must beEqualTo(0)
+      val user2 = "user2@example.com"
+      Image.addLog(image, user2)
+      val logs = Image.logs(image)
+      logs.length must beEqualTo(1)
+      logs.head.user must beEqualTo(user2)
+    }
+  }
 }
