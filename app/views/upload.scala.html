@@ -1,7 +1,10 @@
 @()(implicit flash: Flash)
 @main("Upload") {
   <h1 class="title">Upload</h1>
-}{
+  <a href="/images" class="btn btn-link btn-nav pull-left" data-transition="slide-out">
+    Images
+  </a>
+} {
   @flash.get("error").map { message =>
     <h3 class="error">@message</h3>
   }
@@ -10,4 +13,5 @@
     <input id="photo" style="display: none;" type="file" name="image" accept="image/*" capture="camera">
     <button class="btn btn-block btn-primary" type="submit" id="upload-button">Upload</button>
   }
+} {
 }

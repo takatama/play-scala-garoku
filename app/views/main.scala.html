@@ -1,4 +1,4 @@
-@(title: String)(header: Html)(content: Html)
+@(title: String)(header: Html)(content: Html)(footer: Html)
 
 <!DOCTYPE html>
 <html>
@@ -19,6 +19,7 @@
         @content
       </div>
     </div>
+      @footer
     <script src="@routes.Assets.at("js/ratchet.js")"></script>
   </body>
 </html>
