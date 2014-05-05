@@ -22,10 +22,13 @@ object Images extends Controller with Secured {
 	    "error" -> "Missing Content-Type"
 	  )
 	  case Some(c) => {
-	    val path = "/tmp/image/" + image.filename
+            val uuid = java.util.UUID.randomUUID().toString();
+	    val path = "/tmp/image/" + uuid + "_" + image.filename
             image.ref.moveTo(new File(path), true)
 	    Image.create(c, path, user)
-            Ok("File uploaded")
+            Redirect(routes.Images.list).flashing(
+	      "success" -> "File uploaded"
+	    )
 	  }
 	}
       }.getOrElse {

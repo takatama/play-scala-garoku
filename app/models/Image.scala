@@ -71,7 +71,7 @@ object Image {
   }
 
   def findByUser(user: String): List[Image] = DB.withConnection { implicit connection =>
-    SQL("select * from image where user = {user}").on(
+    SQL("select * from image where user = {user} order by created desc").on(
       "user" -> user
     ).as(simple *)
   }

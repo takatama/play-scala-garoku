@@ -7,6 +7,6 @@ import views._
 
 object Application extends Controller with Secured {
   def index = SecureAction { user => _ =>
-    Ok(views.html.index("Your new application is ready."))
+    Redirect(routes.Images.list)
   }
 }
