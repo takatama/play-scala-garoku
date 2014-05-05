@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/garoku -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.url=postgres://wsmksmbvjzqohh:6WgZhoRkemr2dvrlQYZ4fYgnmu@ec2-54-83-204-78.compute-1.amazonaws.com:5432/d37rh6fm6tletk -Ddb.default.driver=org.postgresql.Driver
+web: target/universal/stage/bin/garoku -Dhttp.port=${PORT} -DapplyEvolutions.default=true -Ddb.default.url=${DATABASE_URL} -Ddb.default.driver=org.postgresql.Driver -Dconfig.file=conf/prod.conf

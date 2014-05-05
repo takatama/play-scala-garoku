@@ -33,7 +33,8 @@ object User {
       case Some(_) => Left("The email has been used.")
       case None => {
         DB.withConnection { implicit connection =>
-          val id: Long = SQL("select next value for user_seq").as(scalar[Long].single)
+          //val id: Long = SQL("select next value for user_seq").as(scalar[Long].single)
+          val id: Long = SQL("select nextval('user_seq')").as(scalar[Long].single)
           val hashed = password.bcrypt(generateSalt)
 
           SQL(

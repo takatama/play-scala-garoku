@@ -15,7 +15,7 @@ create table image (
   content_type varchar(255) not null,
   path varchar(255) not null,
   created timestamp not null default current_timestamp,
-  user varchar(255) not null
+  user_id varchar(255) not null
 );
 
 create sequence log_seq;
@@ -23,7 +23,7 @@ create sequence log_seq;
 create table log (
   id integer not null primary key,
   image_id integer not null,
-  user varchar(255) not null,
+  user_id varchar(255) not null,
   created timestamp not null default current_timestamp,
   foreign key (image_id) references image(id) on delete cascade
 );
@@ -35,3 +35,6 @@ drop table if exists record;
 
 drop sequence if exists image_seq;
 drop table if exists image;
+
+drop sequence if exists log_seq;
+drop table if exists log;

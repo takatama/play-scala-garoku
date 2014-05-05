@@ -1,14 +1,10 @@
-@(tokens: List[Token])
+@(email: String)
 <html>
   <head>
     <title>Send</title>
   </head>
   <body>
     <h1>Email has been send</h1>
-    <ul>
-    @tokens.map { token =>
-      <li><a href="/register/@token.token">@token.token</a></li>
-    }
-    </ul>
+    <p>Please check @email, and continue sign up process.</p>
   </body>
 </html>

@@ -75,8 +75,8 @@ object Authentication extends Controller {
   private def sendEmailWithToken(toAddress: String, action: String, subject: String) = {
     val token = Token.create(toAddress, action)
     val host = Play.configuration.getString("host").getOrElse("http://localhost:9000")
-    //sendEmail(toAddress, subject, host + "/register/" + token.token)
-    Ok(views.html.send(Token.all()))
+    sendEmail(toAddress, subject, host + "/register/" + token.token)
+    Ok(views.html.send(toAddress))
   }
 
   def sendSignupEmail = Action { implicit request =>

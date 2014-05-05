@@ -14,7 +14,7 @@ object Log {
   val simple = {
     get[Pk[Long]]("log.id") ~
     get[Pk[Long]]("log.image_id") ~
-    get[String]("log.user") ~
+    get[String]("log.user_id") ~
     get[Date]("log.created") map {
       case id~imageId~user~created => Log(id, imageId, user, created)
     }
@@ -33,7 +33,7 @@ object Image {
     get[String]("image.content_type") ~
     get[String]("image.path") ~
     get[Date]("image.created") ~
-    get[String]("image.user") map {
+    get[String]("image.user_id") map {
       case id~contentType~path~created~user => Image(id, contentType, path, created, user)
     }
   }
@@ -41,7 +41,8 @@ object Image {
   def create(contentType: String, path: String, user: String): Image = {
     val created = new Date
     DB.withConnection { implicit connection =>
-      val id: Long = SQL("select next value for image_seq").as(scalar[Long].single)
+      //val id: Long = SQL("select next value for image_seq").as(scalar[Long].single)
+      val id: Long = SQL("select nextval('image_seq')").as(scalar[Long].single)
       val image = Image(Id(id), contentType, path, created, user)
 
       SQL(
@@ -71,7 +72,7 @@ object Image {
   }
 
   def findByUser(user: String): List[Image] = DB.withConnection { implicit connection =>
-    SQL("select * from image where user = {user} order by created desc").on(
+    SQL("select * from image where user_id = {user} order by created desc").on(
       "user" -> user
     ).as(simple *)
   }
@@ -80,7 +81,8 @@ object Image {
     if (image.user == user) {
       None
     } else {
-      val id: Long = SQL("select next value for log_seq").as(scalar[Long].single)
+      //val id: Long = SQL("select next value for log_seq").as(scalar[Long].single)
+      val id: Long = SQL("select nextval('log_seq')").as(scalar[Long].single)
       val created = new Date
       val log = Log(Id(id), image.id, user, created)
       SQL("insert into log values({id}, {imageId}, {user}, {created})").on(
